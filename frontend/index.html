@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartHealth AI | Heart Disease Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.5);
+            --secondary: #ec4899;
+            --secondary-glow: rgba(236, 72, 153, 0.5);
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 20%, var(--primary-glow) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, var(--secondary-glow) 0%, transparent 40%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 2rem;
+            z-index: 10;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text) 0%, var(--text-dim) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        .predictor-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-dim);
+            transition: color 0.3s;
+        }
+
+        input, select {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-predict {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 15px -3px var(--primary-glow);
+        }
+
+        .btn-predict:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn-predict:active {
+            transform: scale(0.98);
+        }
+
+        #result-container {
+            margin-top: 2rem;
+            display: none;
+            text-align: center;
+            border-radius: 16px;
+            padding: 2rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .result-status {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-prob {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            transition: width 1s ease-in-out;
+            border-radius: 4px;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            .predictor-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>HeartHealth AI</h1>
+            <p class="subtitle">Predict your heart disease risk using advanced Logistic Regression</p>
+        </header>
+
+        <div class="predictor-card">
+            <form id="heartForm">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" required placeholder="e.g. 45" min="0" max="120">
+                    </div>
+                    <div class="input-group">
+                        <label for="sex">Sex</label>
+                        <select id="sex" required>
+                            <option value="1">Male</option>
+                            <option value="0">Female</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="cp">Chest Pain Type (0-3)</label>
+                        <select id="cp" required>
+                            <option value="0">Typical Angina</option>
+                            <option value="1">Atypical Angina</option>
+                            <option value="2">Non-anginal Pain</option>
+                            <option value="3">Asymptomatic</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="trestbps">Resting BP (mm Hg)</label>
+                        <input type="number" id="trestbps" required placeholder="e.g. 120" min="50" max="250">
+                    </div>
+                    <div class="input-group">
+                        <label for="chol">Cholesterol (mg/dl)</label>
+                        <input type="number" id="chol" required placeholder="e.g. 200" min="100" max="600">
+                    </div>
+                    <div class="input-group">
+                        <label for="fbs">Fasting Blood Sugar > 120</label>
+                        <select id="fbs" required>
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="restecg">Resting ECG (0-2)</label>
+                        <select id="restecg" required>
+                            <option value="0">Normal</option>
+                            <option value="1">ST-T Wave Abnormality</option>
+                            <option value="2">Left Ventricular Hypertrophy</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="thalach">Max Heart Rate Achieved</label>
+                        <input type="number" id="thalach" required placeholder="e.g. 150" min="50" max="250">
+                    </div>
+                    <div class="input-group">
+                        <label for="exang">Exercise Induced Angina</label>
+                        <select id="exang" required>
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="oldpeak">ST Depression (Oldpeak)</label>
+                        <input type="number" step="0.1" id="oldpeak" required placeholder="e.g. 1.0" min="0" max="10">
+                    </div>
+                    <div class="input-group">
+                        <label for="slope">ST Slope Type (0-2)</label>
+                        <select id="slope" required>
+                            <option value="0">Upsloping</option>
+                            <option value="1">Flat</option>
+                            <option value="2">Downsloping</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="ca">Major Vessels (0-4)</label>
+                        <input type="number" id="ca" required placeholder="0-4" min="0" max="4">
+                    </div>
+                    <div class="input-group">
+                        <label for="thal">Thal (0-3)</label>
+                        <select id="thal" required>
+                            <option value="0">Normal</option>
+                            <option value="1">Fixed Defect</option>
+                            <option value="2">Reversable Defect</option>
+                            <option value="3">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-predict">Analyze Health Status</button>
+            </form>
+
+            <div id="result-container">
+                <div class="result-status" id="result-status"></div>
+                <div class="result-prob" id="result-prob"></div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('heartForm');
+        const resultContainer = document.getElementById('result-container');
+        const resultStatus = document.getElementById('result-status');
+        const resultProb = document.getElementById('result-prob');
+        const progressBar = document.getElementById('progress-bar');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = form.querySelector('button');
+            const originalBtnText = btn.innerText;
+            btn.innerText = 'Analyzing...';
+            btn.disabled = true;
+
+            const data = {
+                age: parseFloat(document.getElementById('age').value),
+                sex: parseInt(document.getElementById('sex').value),
+                cp: parseInt(document.getElementById('cp').value),
+                trestbps: parseFloat(document.getElementById('trestbps').value),
+                chol: parseFloat(document.getElementById('chol').value),
+                fbs: parseInt(document.getElementById('fbs').value),
+                restecg: parseInt(document.getElementById('restecg').value),
+                thalach: parseFloat(document.getElementById('thalach').value),
+                exang: parseInt(document.getElementById('exang').value),
+                oldpeak: parseFloat(document.getElementById('oldpeak').value),
+                slope: parseInt(document.getElementById('slope').value),
+                ca: parseFloat(document.getElementById('ca').value),
+                thal: parseInt(document.getElementById('thal').value)
+            };
+
+            try {
+                // Adjusting the URL to point to development or production backend
+                const response = await fetch('http://127.0.0.1:8000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) throw new Error('Prediction request failed');
+
+                const result = await response.json();
+                
+                resultContainer.style.display = 'block';
+                resultStatus.innerText = result.status;
+                
+                const probPercent = (result.probability * 100).toFixed(1);
+                resultProb.innerText = `Probability: ${probPercent}%`;
+                
+                progressBar.style.width = `${probPercent}%`;
+                
+                if (result.prediction === 0) {
+                    resultStatus.style.color = 'var(--success)';
+                    progressBar.style.background = 'var(--success)';
+                    resultContainer.style.background = 'rgba(34, 197, 94, 0.1)';
+                } else {
+                    resultStatus.style.color = 'var(--danger)';
+                    progressBar.style.background = 'var(--danger)';
+                    resultContainer.style.background = 'rgba(239, 68, 68, 0.1)';
+                }
+
+                resultContainer.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (error) {
+                alert('Connection to AI service failed. Please check the backend.');
+                console.error(error);
+            } finally {
+                btn.innerText = originalBtnText;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

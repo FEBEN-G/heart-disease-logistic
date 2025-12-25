@@ -1,0 +1,23 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+python_bin/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Notebook Checkpoints
+.ipynb_checkpoints
+
+# Logs
+*.log
+
+# Sensitive Info
+.env
