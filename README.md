@@ -55,18 +55,3 @@ The pipeline leverages `scikit-learn`:
 2. **Scaling**: Implements `StandardScaler` to normalize feature variance.
 3. **Algorithm**: Logistic Regression with 1000 max iterations for convergence.
 4. **Export**: The entire pipeline (Scaler + Model) is saved as a single object for consistency.
-
-## 🌐 Deployment Guide
-
-### Backend (Render/Railway)
-1. **Connect Repository**: Link your GitHub repo to Render or Railway.
-2. **Root Directory**: Set to `backend`.
-3. **Build Command**: `pip install -r requirements.txt`.
-4. **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`.
-
-### Frontend (Vercel/Netlify)
-1. **Deploy Path**: Point to the `frontend` directory.
-2. **API Integration**: Update the `fetch` URL in `frontend/index.html` (line 348) to point to your deployed backend URL.
-
----
-*Developed as part of an ML assignment for Heart Health Prediction.*
