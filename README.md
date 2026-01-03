@@ -9,6 +9,26 @@ A professional end-to-end machine learning application that predicts the risk of
 - **Premium UI**: Modern, responsive dashboard with animations and real-time visualization.
 - **Health Monitoring**: Built-in health check endpoints for server monitoring.
 
+## 📊 Dataset Information
+The model is trained on the **UCI Heart Disease Dataset**, which includes 14 clinical features used to predict the presence of cardiovascular disease:
+
+| Feature | Description |
+| :--- | :--- |
+| **Age** | Age of the patient in years |
+| **Sex** | Gender (1 = Male, 0 = Female) |
+| **Chest Pain (cp)** | Type of chest pain (0-3: Typical, Atypical, Non-anginal, Asymptomatic) |
+| **Resting BP (trestbps)** | Resting blood pressure (in mm Hg on admission to the hospital) |
+| **Cholesterol (chol)** | Serum cholesterol in mg/dl |
+| **Fasting BS (fbs)** | Fasting blood sugar > 120 mg/dl (1 = true; 0 = false) |
+| **Resting ECG (restecg)** | Resting electrocardiographic results (0-2) |
+| **Max Heart Rate (thalach)** | Maximum heart rate achieved |
+| **Exercise Angina (exang)** | Exercise induced angina (1 = yes; 0 = no) |
+| **Oldpeak** | ST depression induced by exercise relative to rest |
+| **Slope** | The slope of the peak exercise ST segment |
+| **Major Vessels (ca)** | Number of major vessels (0-3) colored by flourosopy |
+| **Thal** | Thalassemia status (0-3) |
+| **Target** | Diagnosis of heart disease (0 = No, 1 = Yes) |
+
 ## 📂 Project Structure
 ```text
 .
